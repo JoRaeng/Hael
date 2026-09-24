@@ -1,0 +1,326 @@
+/* =========================================================
+   색 바꾸기: 아래 :root 값만 고치면 전체 톤이 바뀌어요
+   ========================================================= */
+:root {
+  --night:   #0e1d36;   /* 배경 */
+  --deep:    #152a4c;   /* 한 단계 밝은 면 */
+  --line:    #2a4470;   /* 구분선 */
+  --mist:    #8ea6cb;   /* 보조 글자 */
+  --foam:    #e8eff9;   /* 본문 글자 */
+  --lamp:    #f1cd92;   /* 따뜻한 포인트 (등불색) */
+  --accent:  #4a8fe7;   /* 세계별 강조색 — 자동으로 바뀜 */
+
+  --display: "Hahmlet", "Nanum Myeongjo", "Batang", serif;
+  --body:    "Gowun Batang", "Nanum Myeongjo", "Batang", serif;
+
+  --bar-h: 64px;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(120% 60% at 50% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    var(--night);
+  background-attachment: fixed;
+  color: var(--foam);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .4s;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 2px solid var(--lamp); outline-offset: 3px; border-radius: 4px; }
+
+/* ---------- 상단 바 ---------- */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  height: var(--bar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  background: color-mix(in srgb, var(--night) 82%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.home-btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: .04em;
+  color: var(--foam);
+}
+.home-btn:hover { color: var(--lamp); }
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font: inherit;
+  font-size: .95rem;
+  color: var(--foam);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .4rem 1rem .4rem .7rem;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.back-btn:hover { border-color: var(--lamp); color: var(--lamp); }
+.back-btn[hidden] { display: none; }
+
+main:focus, main:focus-visible { outline: none; }
+
+/* ---------- 첫 페이지 : 세계 선택 ---------- */
+.worlds {
+  display: flex;
+  height: calc(100vh - var(--bar-h) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  min-height: 460px;
+}
+.world {
+  --wc: var(--accent);
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  overflow: hidden;
+  background: linear-gradient(to top, color-mix(in srgb, var(--wc) 55%, var(--night)) 0%, color-mix(in srgb, var(--wc) 14%, var(--night)) 100%);
+  border-right: 1px solid color-mix(in srgb, var(--wc) 30%, var(--night));
+  transition: flex-grow .5s cubic-bezier(.2,.7,.2,1);
+  animation: rise .9s cubic-bezier(.2,.7,.2,1) both;
+}
+.world:last-child { border-right: 0; }
+.world:nth-child(2) { animation-delay: .08s; }
+.world:nth-child(3) { animation-delay: .16s; }
+.world:nth-child(4) { animation-delay: .24s; }
+.world:hover, .world:focus-visible { flex-grow: 1.6; }
+.world:focus-visible { outline-offset: -6px; }
+
+.world-en {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  left: clamp(1.25rem, 3vw, 2.5rem);
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 1rem;
+  letter-spacing: .08em;
+  color: color-mix(in srgb, var(--foam) 70%, var(--wc));
+}
+.world-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.5vw, 4.6rem);
+  line-height: 1.05;
+  color: var(--foam);
+}
+.world-desc {
+  max-width: 22em;
+  margin-top: .8rem;
+  font-size: .95rem;
+  color: color-mix(in srgb, var(--foam) 78%, var(--wc));
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .35s, transform .35s;
+}
+.world:hover .world-desc, .world:focus-visible .world-desc { opacity: 1; transform: none; }
+.world-count { margin-top: .6rem; font-size: .85rem; color: var(--lamp); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+
+/* ---------- 공통 : 페이지 제목 ---------- */
+.page-head {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem);
+}
+.page-head h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  line-height: 1.1;
+  color: var(--foam);
+}
+.page-head h1 small {
+  display: block;
+  margin-top: .4rem;
+  font-weight: 300;
+  font-size: .38em;
+  letter-spacing: .06em;
+  color: var(--accent);
+}
+.page-head p { margin: .8rem 0 0; max-width: 36em; color: var(--mist); }
+
+/* ---------- 목록 공통 (캐릭터 / 소설) ---------- */
+.list {
+  list-style: none;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem) 5rem;
+}
+.list li { border-top: 1px solid var(--line); }
+.list li:last-child { border-bottom: 1px solid var(--line); }
+
+/* ---------- 캐릭터 목록 ---------- */
+.char {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.1rem 0;
+  padding-left: clamp(.5rem, 9vw, 7rem);   /* 이미지를 살짝 좌측에 치우치게 */
+  transition: background-color .25s;
+}
+.char:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+.portrait {
+  position: relative;
+  flex: none;
+  width: clamp(84px, 11vw, 128px);
+  aspect-ratio: 3 / 4;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 45%, var(--deep)), var(--deep));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.portrait img { width: 100%; height: 100%; object-fit: cover; }
+.portrait.missing img { display: none; }
+.portrait.missing::after {
+  content: attr(data-initial);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 2.2rem;
+  color: color-mix(in srgb, var(--foam) 80%, var(--accent));
+}
+
+.char-text { margin-left: auto; text-align: right; padding-right: clamp(.25rem, 2vw, 1.5rem); }
+.char-name {
+  display: block;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4.2vw, 2.8rem);
+  line-height: 1.15;
+  transition: color .25s, transform .25s;
+}
+.char:hover .char-name { color: var(--lamp); transform: translateX(-6px); }
+.char-tag { display: block; margin-top: .2rem; font-size: .9rem; color: var(--mist); }
+
+/* ---------- 캐릭터 페이지 머리 ---------- */
+.char-head { display: flex; align-items: flex-end; gap: 1.5rem; }
+.char-head .portrait { width: clamp(96px, 14vw, 150px); }
+
+/* ---------- 소설 목록 ---------- */
+.novel {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 1.3rem clamp(.25rem, 2vw, 1.5rem) 1.3rem clamp(.5rem, 9vw, 7rem);
+  transition: background-color .25s;
+}
+.novel:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.novel-no { flex: none; font-family: var(--display); font-weight: 300; font-size: 1rem; color: var(--accent); min-width: 2ch; }
+.novel-text { margin-left: auto; text-align: right; }
+.novel-title {
+  display: block;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.25rem, 3vw, 1.8rem);
+  line-height: 1.25;
+  transition: color .25s;
+}
+.novel:hover .novel-title { color: var(--lamp); }
+.novel-meta { display: block; margin-top: .25rem; font-size: .9rem; color: var(--mist); }
+
+/* ---------- 소설 본문 ---------- */
+.reader {
+  max-width: 36em;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1.1rem, 5vw, 2rem) 5rem;
+}
+.reader-head { margin-bottom: 2.75rem; }
+.reader-head .by { margin: 0 0 .6rem; font-size: .95rem; color: var(--accent); }
+.reader-head h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  line-height: 1.2;
+}
+.reader-head .date { margin: .6rem 0 0; font-size: .9rem; color: var(--mist); }
+
+.prose { font-size: 1.08rem; line-height: 1.95; word-break: keep-all; overflow-wrap: break-word; }
+.prose p { margin: 0 0 1.4em; }
+/* txt / content 본문: 띄어쓰기·줄바꿈을 쓴 그대로 */
+.prose .plain { white-space: pre-wrap; tab-size: 4; }
+/* docx 본문: 워드 문단 = 한 줄, 빈 문단 = 빈 줄 */
+.prose .docx p { margin: 0; white-space: pre-wrap; min-height: 1.95em; }
+.prose .docx img { height: auto; margin: 1.5em auto; }
+.prose hr {
+  border: 0;
+  margin: 2.6em auto;
+  text-align: center;
+  color: var(--lamp);
+}
+.prose hr::before { content: "✦"; letter-spacing: 1.2em; padding-left: 1.2em; }
+
+.reader-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.reader-nav a {
+  display: block;
+  padding: .9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color .2s;
+}
+.reader-nav a:hover { border-color: var(--accent); }
+.reader-nav .next { text-align: right; grid-column: 2; }
+.reader-nav small { display: block; font-size: .8rem; color: var(--mist); }
+.reader-nav span { font-family: var(--display); }
+
+/* ---------- 비었을 때 / 오류 ---------- */
+.empty {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2.5rem);
+  color: var(--mist);
+}
+.empty code { color: var(--lamp); font-family: inherit; }
+
+/* ---------- 모바일 ---------- */
+@media (max-width: 720px) {
+  .worlds { flex-direction: column; height: auto; min-height: 0; }
+  .world {
+    min-height: 26vh;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--wc) 30%, var(--night));
+  }
+  .world:hover, .world:focus-visible { flex-grow: 1; }
+  .world-desc { opacity: 1; transform: none; }
+  .char { gap: 1rem; padding-left: .75rem; }
+  .novel { padding-left: .75rem; }
+  .reader-nav { grid-template-columns: 1fr; }
+  .reader-nav .next { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
