@@ -267,6 +267,7 @@ main:focus, main:focus-visible { outline: none; }
 .prose .plain { white-space: pre-wrap; tab-size: 4; }
 /* docx 본문: 워드 문단 = 한 줄, 빈 문단 = 빈 줄 */
 .prose .docx p { margin: 0; white-space: pre-wrap; min-height: 1.95em; }
+.prose .docx p.indent { text-indent: 1em; }   /* 워드 첫 줄 들여쓰기 */
 .prose .docx img { height: auto; margin: 1.5em auto; }
 .prose hr {
   border: 0;

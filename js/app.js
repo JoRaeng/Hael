@@ -92,7 +92,16 @@
     const mammoth = await loadMammoth();
     const result = await mammoth.convertToHtml(
       { arrayBuffer },
-      { ignoreEmptyParagraphs: false }   // 빈 줄(빈 문단)도 그대로
+      {
+        ignoreEmptyParagraphs: false,    // 빈 줄(빈 문단)도 그대로
+        // 워드의 '첫 줄 들여쓰기'(문단 서식)는 mammoth가 버리므로 클래스로 옮겨요
+        styleMap: ["p[style-name='__hael-indent'] => p.indent:fresh"],
+        transformDocument: mammoth.transforms.paragraph((p) =>
+          !p.styleId && p.indent && parseFloat(p.indent.firstLine) > 0
+            ? { ...p, styleId: "__hael-indent", styleName: "__hael-indent" }
+            : p
+        ),
+      }
     );
     const box = document.createElement("div");
     box.innerHTML = result.value;
